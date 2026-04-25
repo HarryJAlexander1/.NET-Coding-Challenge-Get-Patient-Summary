@@ -3,25 +3,34 @@ using Microsoft.AspNetCore.Mvc;
 using PatientAccessApi.Endpoints.Responses;
 using PatientAccessApi.Services;
 using PatientAccessApi.Log;
+using Microsoft.Extensions.Options;
 
 namespace PatientAccessApi.Endpoints
 {
-    internal class PatientAccessEndpoints
+    public class PatientAccessEndpoints
     {
         private readonly Server _server;
         private readonly LogHandler _logHandler;
-        internal PatientAccessEndpoints(Server server, LogHandler logHandler)
+        private readonly Config _config;
+        public PatientAccessEndpoints(Server server, LogHandler logHandler, IOptions<Config> config)
         {
             _server = server;
             _logHandler = logHandler;
+            _config = config.Value;
         }
 
         internal void MapPatientEndpoints(ref WebApplication app)
         {
             var group = app.MapGroup("/patient");
 
-            group.MapGet("/get", async ([FromBody] PatientDetailsRequest request) =>
+            group.MapGet("/get", async (HttpContext httpContext, int userId) =>
             {
+                if (!httpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey) || apiKey != _config.ApiKey)
+                {
+                    return Results.Unauthorized();
+                }
+
+                var request = new PatientDetailsRequest { UserId = userId };
                 var result = await _server.GetPatient(request);
                 return result;
             })

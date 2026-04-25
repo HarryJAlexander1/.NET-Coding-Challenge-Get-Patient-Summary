@@ -1,10 +1,10 @@
 ﻿namespace PatientAccessApi
 {
-    internal class Config
+    public class Config
     {
-        internal bool? GenerateMockData { get; set; }
-        internal bool? EnableLogs { get; set; }
-        internal string? LogDirectory { get; set; }
-        internal string? APIKey { get; set; }
+        public bool? GenerateMockData { get; set; }
+        public bool? EnableLogs { get; set; }
+        public string? LogDirectory { get; set; }
+        public string? ApiKey { get; set; }
     }
 }

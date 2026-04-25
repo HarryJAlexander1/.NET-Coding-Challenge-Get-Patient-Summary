@@ -4,10 +4,10 @@ using PatientAccessApi.Log;
 
 namespace PatientAccessApi
 {
-    internal class StorageHandler
+    public class StorageHandler
     {
         private readonly LogHandler _logHandler;
-        internal StorageHandler(LogHandler logHandler)
+        public StorageHandler(LogHandler logHandler)
         {
             _logHandler = logHandler;
         }

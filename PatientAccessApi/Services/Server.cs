@@ -4,11 +4,11 @@ using PatientAccessApi.Log;
 
 namespace PatientAccessApi.Services
 {
-    internal class Server
+    public class Server
     {
         private readonly LogHandler _logHandler;
         private readonly StorageHandler _storageHandler;
-        internal Server(StorageHandler storageHandler, LogHandler logHandler)
+        public Server(StorageHandler storageHandler, LogHandler logHandler)
         {
             _storageHandler = storageHandler;
             _logHandler = logHandler;
@@ -22,9 +22,9 @@ namespace PatientAccessApi.Services
 
                 if (patient is null)
                 {
-                    var errorMessage = $"Error: Patient details not found for userId {request.UserId}.";
+                    var errorMessage = $"Patient details not found for userId {request.UserId}.";
                     _logHandler.WriteLog(new Log.Log(errorMessage, Log.LogLevel.Error));
-                    return TypedResults.Problem(errorMessage);
+                    return TypedResults.NotFound(errorMessage);
                 }
 
                 _logHandler.WriteLog(new Log.Log($"Successfully retrieved patient details for userId {request.UserId}.", Log.LogLevel.Info));

@@ -11,10 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Logs\" />
+    <Folder Include="Documentation\" />
     <Folder Include="Security\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

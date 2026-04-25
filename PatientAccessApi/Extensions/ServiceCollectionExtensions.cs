@@ -11,10 +11,10 @@ namespace PatientAccessApi.Extensions
         {
             serviceCollection
                 .Configure<Config>(configuration.GetSection("PatientAccessAPI"))
-                .AddSingleton<StorageHandler>()
-                .AddSingleton<PatientAccessEndpoints>()
                 .AddSingleton<LogHandler>()
+                .AddSingleton<StorageHandler>()
                 .AddSingleton<Server>()
+                .AddSingleton<PatientAccessEndpoints>()
                 .AddEndpointsApiExplorer();
 
             return serviceCollection;
