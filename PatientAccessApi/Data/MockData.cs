@@ -2,6 +2,9 @@
 
 namespace PatientAccessApi.Data
 {
+    /// <summary>
+    /// Provides static in-memory mock patient data for development and testing purposes.
+    /// </summary>
     internal static class MockData
     {
         private static ConcurrentDictionary<int, Patient> Patients { get; } = new ConcurrentDictionary<int, Patient>
@@ -13,6 +16,11 @@ namespace PatientAccessApi.Data
             [5] = new Patient { UserId = 5, Name = "Carol Brown", DateOfBirth = new DateTime(2001, 8, 19), GPPractice = "GP Practice 2" },
         };
 
+        /// <summary>
+        /// Retrieves a patient from the mock data store by their user ID.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the patient to retrieve.</param>
+        /// <returns>The matching <see cref="Patient"/>, or <c>null</c> if not found.</returns>
         internal static Patient? GetPatientById(int userId)
         {
             Patients.TryGetValue(userId, out var patient);
