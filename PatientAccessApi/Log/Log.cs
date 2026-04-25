@@ -34,6 +34,7 @@ namespace PatientAccessApi.Log
     public class LogHandler
     {
         private readonly string _logDirectory;
+        private readonly Config _config;
         /// <summary>
         /// Initialises a new instance of <see cref="LogHandler"/>.
         /// </summary>
@@ -41,6 +42,7 @@ namespace PatientAccessApi.Log
         public LogHandler(IOptions<Config> config)
         {
             _logDirectory = config.Value.LogDirectory ?? ".\\systemlogs";
+            _config = config.Value;
         }
         /// <summary>
         /// Writes a log entry to the application log file.
@@ -48,6 +50,9 @@ namespace PatientAccessApi.Log
         /// <param name="log">The log entry to write.</param>
         internal void WriteLog(Log log)
         {
+            if (_config.EnableLogs == null || !_config.EnableLogs.Value)
+                return;
+
             var logFilePath = Path.Combine(_logDirectory, "application.log");
             var logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{log.Level}] \"{log.Data}\" (Caller: {log.Caller})";
 

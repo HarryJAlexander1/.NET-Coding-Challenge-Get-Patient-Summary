@@ -10,13 +10,17 @@ namespace PatientAccessApi
     public class StorageHandler
     {
         private readonly LogHandler _logHandler;
+        private readonly MockData _mockData;
+
         /// <summary>
         /// Initialises a new instance of <see cref="StorageHandler"/>.
         /// </summary>
         /// <param name="logHandler">The log handler used to record storage events.</param>
-        public StorageHandler(LogHandler logHandler)
+        /// <param name="mockData">The mock data store used for retrieving patient information.</param>
+        public StorageHandler(LogHandler logHandler, MockData mockData)
         {
             _logHandler = logHandler;
+            _mockData = mockData;
         }
 
         /// <summary>
@@ -28,7 +32,7 @@ namespace PatientAccessApi
         {
             try
             {
-                var patient = MockData.GetPatientById(request.UserId);
+                var patient = _mockData.GetPatientById(request.UserId);
                 return patient;
             }
             catch (Exception ex)

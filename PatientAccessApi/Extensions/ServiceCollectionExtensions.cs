@@ -1,4 +1,5 @@
-﻿using PatientAccessApi.Endpoints;
+﻿using PatientAccessApi.Data;
+using PatientAccessApi.Endpoints;
 using PatientAccessApi.Log;
 using PatientAccessApi.Services;
 
@@ -21,6 +22,7 @@ namespace PatientAccessApi.Extensions
             serviceCollection
                 .Configure<Config>(configuration.GetSection("PatientAccessAPI"))
                 .AddSingleton<LogHandler>()
+                .AddSingleton<MockData>()
                 .AddSingleton<StorageHandler>()
                 .AddSingleton<Server>()
                 .AddSingleton<PatientAccessEndpoints>()
