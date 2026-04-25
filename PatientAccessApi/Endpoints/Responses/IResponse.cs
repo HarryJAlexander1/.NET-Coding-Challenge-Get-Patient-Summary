@@ -2,7 +2,6 @@
 {
     public interface IResponse
     {
-        int UserId { get; set; }
-        public int NHSNumber { get; set; }
+        bool Success { get; set; }
     }
 }
