@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Json;
 using PatientAccessApi.Data;
 using Xunit;
+using PatientAccessApi.Endpoints.Responses;
 
 namespace PatientAccessApi.Tests.Endpoints
 {
@@ -32,9 +33,9 @@ namespace PatientAccessApi.Tests.Endpoints
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var patient = await response.Content.ReadFromJsonAsync<Patient>();
-            Assert.NotNull(patient);
-            Assert.Equal(1, patient.UserId);
+            var patientResponse = await response.Content.ReadFromJsonAsync<PatientDetailsResponse>();
+            Assert.NotNull(patientResponse);
+            Assert.Equal(1, patientResponse.Patient?.UserId);
         }
 
         [Fact]
@@ -82,9 +83,9 @@ namespace PatientAccessApi.Tests.Endpoints
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var patient = await response.Content.ReadFromJsonAsync<Patient>();
-            Assert.NotNull(patient);
-            Assert.Equal(expectedName, patient.Name);
+            var patientResponse = await response.Content.ReadFromJsonAsync<PatientDetailsResponse>();
+            Assert.NotNull(patientResponse);
+            Assert.Equal(expectedName, patientResponse.Patient?.Name);
         }
     }
 }
