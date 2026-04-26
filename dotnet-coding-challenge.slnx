@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="PatientAccessApi/PatientAccessApi.csproj" />
+  <Project Path="PatientAccessApi.Tests/PatientAccessApi.Tests.csproj" />
 </Solution>
+
