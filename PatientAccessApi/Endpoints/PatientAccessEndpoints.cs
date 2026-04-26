@@ -38,17 +38,39 @@ namespace PatientAccessApi.Endpoints
 
             group.MapGet("/get", async (HttpContext httpContext, int userId) =>
             {
-                if (!httpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey) || apiKey != _config.ApiKey)
+                try 
                 {
-                    return Results.Unauthorized();
-                }
+                    if (!httpContext.Request.Headers.TryGetValue("X-Api-Key", out var apiKey) || apiKey != _config.ApiKey)
+                    {
+                        return Results.Unauthorized();
+                    }
 
-                var request = new PatientDetailsRequest { UserId = userId };
-                var result = await _server.GetPatient(request);
-                return result;
+                    var request = new PatientDetailsRequest { UserId = userId };
+                    var result = await _server.GetPatient(request);
+
+                    if (result == null)
+                    {
+                        return Results.NotFound(new FailResponse() { ErrorMessage = $"Failed to retrieve patient details for userId {userId}" });
+                    }
+
+                    var response = new PatientDetailsResponse
+                    {
+                        Patient = result,
+                        Success = true
+                    };
+
+                    return Results.Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    var message = $"Error: An unexpected error occurred while retrieving patient details for userId {userId}. Exception: {ex.Message}";
+                    _logHandler.WriteLog(new Log.Log(message, Log.LogLevel.Error));
+                    return Results.StatusCode(StatusCodes.Status500InternalServerError);
+                }
             })
             .Accepts<PatientDetailsRequest>("application/json")
             .Produces<PatientDetailsResponse>(StatusCodes.Status200OK, "application/json")
+            .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError)
             .WithDisplayName("get")

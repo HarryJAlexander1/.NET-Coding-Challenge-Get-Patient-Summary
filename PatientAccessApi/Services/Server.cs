@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
+using PatientAccessApi.Data;
 using PatientAccessApi.Endpoints.Requests;
 using PatientAccessApi.Log;
 using System.Diagnostics;
@@ -28,41 +29,31 @@ namespace PatientAccessApi.Services
         /// </summary>
         /// <param name="request">The request containing the user ID of the patient to retrieve.</param>
         /// <returns>
-        /// A <see cref="IResult"/> representing HTTP 200 OK with the patient on success,
-        /// HTTP 404 Not Found if the patient does not exist, or HTTP 500 on an unexpected error.
+        /// A <see cref="Patient?"/> representing the patient on success, or null if the patient does not exist.
         /// </returns>
-        internal async Task<IResult> GetPatient(PatientDetailsRequest request)
+        internal async Task<Patient?> GetPatient(PatientDetailsRequest request)
         {
-            try
+            var stopwatch = Stopwatch.StartNew();
+
+            var patient = await _storageHandler.GetPatientDetails(request);
+
+            stopwatch.Stop();
+
+            if (stopwatch.ElapsedMilliseconds > 1000) // Log a warning if retrieval took longer than 1 second
             {
-                var stopwatch = Stopwatch.StartNew();
-
-                var patient = await _storageHandler.GetPatientDetails(request);
-
-                stopwatch.Stop();
-
-                if (stopwatch.ElapsedMilliseconds > 1000) // Log a warning if retrieval took longer than 1 second
-                {
-                    _logHandler.WriteLog(new Log.Log($"Retrieving patient details for userId {request.UserId} took {stopwatch.ElapsedMilliseconds} ms.", Log.LogLevel.Warning));
-                }
-
-                if (patient is null)
-                {
-                    var errorMessage = $"Patient details not found for userId {request.UserId}.";
-                    _logHandler.WriteLog(new Log.Log(errorMessage, Log.LogLevel.Error));
-                    return TypedResults.NotFound(errorMessage);
-                }
-
-                _logHandler.WriteLog(new Log.Log($"Successfully retrieved patient details for userId {request.UserId}.", Log.LogLevel.Info));
-
-                return TypedResults.Ok(patient);
+                _logHandler.WriteLog(new Log.Log($"Retrieving patient details for userId {request.UserId} took {stopwatch.ElapsedMilliseconds} ms.", Log.LogLevel.Warning));
             }
-            catch (Exception ex)
+
+            if (patient is null)
             {
-                var message = $"Error: An unexpected error occurred while retrieving patient details for userId {request.UserId}. Exception: {ex.Message}";
-                _logHandler.WriteLog(new Log.Log(message, Log.LogLevel.Error));
-                return TypedResults.Problem(message);
+                var errorMessage = $"Patient details not found for userId {request.UserId}.";
+                _logHandler.WriteLog(new Log.Log(errorMessage, Log.LogLevel.Error));
+                return null;
             }
+
+            _logHandler.WriteLog(new Log.Log($"Successfully retrieved patient details for userId {request.UserId}.", Log.LogLevel.Info));
+
+            return patient;
         }
     }
 }
